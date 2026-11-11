@@ -1,7 +1,9 @@
 import { useLocalSearchParams } from 'expo-router';
+import { Linking } from 'react-native';
 
-import { Card, Logo, Screen, T, Title } from '@/components/ui';
+import { Button, Card, Logo, Screen, T, Title } from '@/components/ui';
 import { Colors } from '@/constants/theme';
+import { CHAT_API_URL } from '@/lib/use-chat';
 
 export default function About() {
   const { section } = useLocalSearchParams<{ section?: string }>();
@@ -45,6 +47,9 @@ export default function About() {
       <Logo size={48} />
       <Title>{privacyFirst ? 'Privacy' : 'About Rush'}</Title>
       {privacyFirst ? [privacy, about] : [about, privacy]}
+      {CHAT_API_URL ? (
+        <Button label="Read the full privacy policy" kind="secondary" icon="open-outline" onPress={() => Linking.openURL(`${CHAT_API_URL}/privacy`)} />
+      ) : null}
       <T variant="small" color={Colors.textMuted} style={{ textAlign: 'center' }}>
         Version 1.0
       </T>

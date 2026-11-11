@@ -1,7 +1,8 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 
-import { contextBlock, SYSTEM_PROMPT } from './prompt.ts';
+import { privacyPage } from './privacy.ts';
+import { askRush, MODEL } from './claude.ts';
 import { parseChatRequest, RateLimiter } from './validate.ts';
 
 // Rush chat backend. Its only jobs: keep the Claude API key off the phone,
@@ -9,7 +10,6 @@ import { parseChatRequest, RateLimiter } from './validate.ts';
 // or logs what people write.
 
 const PORT = Number(process.env.PORT ?? 8787);
-const MODEL = process.env.RUSH_MODEL ?? 'claude-opus-5-5';
 const MAX_BODY = 64 * 1024;
 
 const client = new Anthropic(); // reads ANTHROPIC_API_KEY
@@ -49,9 +49,6 @@ function clientIp(req: IncomingMessage): string {
   return first || req.socket.remoteAddress || 'unknown';
 }
 
-const FRIENDLY_REFUSAL =
-  "I'm not able to help with that one. If this is about your health, try asking in a different way, or speak to a pharmacist or health worker. In an emergency, call 112 or the ambulance on 193.";
-
 async function chat(req: IncomingMessage, res: ServerResponse) {
   let body: unknown;
   try {
@@ -68,31 +65,10 @@ async function chat(req: IncomingMessage, res: ServerResponse) {
     return send(res, 429, { error: 'You have sent a lot of messages. Please wait a little and try again.', retryAfter: wait }, { 'Retry-After': String(wait) });
   }
 
-  const system: Anthropic.Beta.BetaTextBlockParam[] = [{ type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }];
-  const ctx = contextBlock(context);
-  if (ctx) system.push({ type: 'text', text: ctx });
-
   try {
-    const response = await client.beta.messages.create({
-      model: MODEL,
-      max_tokens: 4000, // replies are deliberately short; the prompt asks for under ~150 words
-      output_config: { effort: 'medium' },
-      // If Claude declines on safety grounds, the API retries on a suitable
-      // fallback model inside the same call.
-      betas: ['server-side-fallback-2026-07-01'],
-      fallbacks: 'default',
-      system,
-      messages,
-    });
-
-    if (response.stop_reason === 'refusal') return send(res, 200, { reply: FRIENDLY_REFUSAL });
-    const reply = response.content
-      .filter((b): b is Anthropic.Beta.BetaTextBlock => b.type === 'text')
-      .map((b) => b.text)
-      .join('\n')
-      .trim();
+    const { reply, truncated } = await askRush(client, messages, context);
     if (!reply) return send(res, 502, { error: 'Rush could not answer just now. Please try again.' });
-    return send(res, 200, { reply, truncated: response.stop_reason === 'max_tokens' });
+    return send(res, 200, { reply, truncated });
   } catch (error) {
     // Log the error type only, never the conversation.
     if (error instanceof Anthropic.RateLimitError) {
@@ -119,6 +95,11 @@ async function chat(req: IncomingMessage, res: ServerResponse) {
 const server = createServer((req, res) => {
   if (req.method === 'OPTIONS') return send(res, 204, {});
   if (req.method === 'GET' && req.url === '/health') return send(res, 200, { ok: true });
+  if (req.method === 'GET' && (req.url === '/privacy' || req.url === '/')) {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=3600' });
+    res.end(privacyPage(process.env.RUSH_CONTACT_EMAIL ?? ''));
+    return;
+  }
   if (req.method === 'POST' && req.url === '/chat') {
     chat(req, res).catch(() => send(res, 500, { error: 'Something went wrong.' }));
     return;

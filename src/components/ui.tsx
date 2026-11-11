@@ -18,6 +18,8 @@ import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
 import { Colors, Fonts, MaxContentWidth, MinTap, Radius, Spacing, Stroke, Type } from '@/constants/theme';
 import { initials } from '@/lib/medical-id';
 
+import { RushMark } from './rush-mark';
+
 /** react-native-web paints the active switch knob teal unless told otherwise. */
 export const switchWebThumb = { activeThumbColor: Colors.surface } as object;
 
@@ -265,13 +267,11 @@ export function ListRow({
   );
 }
 
-/** Stand-in for the Figma RUSH mark until the exported logo is added. */
+/** The RUSH mark (Figma), optionally with the wordmark underneath. */
 export function Logo({ size = 64, wordmark = true }: { size?: number; wordmark?: boolean }) {
   return (
     <View style={{ alignItems: 'center', gap: Spacing.sm }} accessible accessibilityLabel="Rush">
-      <View style={[styles.logoMark, { width: size, height: size, borderRadius: size * 0.3 }]}>
-        <Ionicons name="hourglass" size={size * 0.6} color={Colors.onPrimary} />
-      </View>
+      <RushMark height={size} />
       {wordmark ? (
         <Text style={{ fontFamily: Fonts.extrabold, fontSize: size * 0.34, letterSpacing: 1.5, color: Colors.ink }}>
           RUSH
@@ -386,7 +386,6 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     backgroundColor: Colors.surface,
   },
-  logoMark: { backgroundColor: Colors.ink, alignItems: 'center', justifyContent: 'center' },
   avatar: { backgroundColor: Colors.avatar, alignItems: 'center', justifyContent: 'center', borderWidth: Stroke, borderColor: Colors.ink },
   art: { backgroundColor: Colors.surface, borderWidth: Stroke, borderColor: Colors.hairline, alignItems: 'center', justifyContent: 'center' },
   pill: {

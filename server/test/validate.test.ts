@@ -58,3 +58,13 @@ test('system prompt is stable (cacheable) and names the emergency numbers', () =
   assert.match(SYSTEM_PROMPT, /112/);
   assert.match(SYSTEM_PROMPT, /193/);
 });
+
+import { privacyPage } from '../src/privacy.ts';
+
+test('privacy page escapes the contact and states the key promises', () => {
+  const html = privacyPage('a<b>@example.com');
+  assert.match(html, /a&lt;b&gt;@example\.com/);
+  assert.match(html, /not store or log/);
+  assert.match(html, /never sent/);
+  assert.match(privacyPage(''), /store listing/);
+});
