@@ -18,6 +18,9 @@ import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
 import { Colors, Fonts, MaxContentWidth, MinTap, Radius, Spacing, Stroke, Type } from '@/constants/theme';
 import { initials } from '@/lib/medical-id';
 
+/** react-native-web paints the active switch knob teal unless told otherwise. */
+export const switchWebThumb = { activeThumbColor: Colors.surface } as object;
+
 export type IconName = ComponentProps<typeof Ionicons>['name'];
 
 type Variant = keyof typeof Type;

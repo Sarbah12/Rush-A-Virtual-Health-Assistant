@@ -20,10 +20,10 @@ type Feature = {
 // Figma "Home" cards, plus Medicines and Emergency SOS.
 const FEATURES: Feature[] = [
   { key: 'history', title: 'Medical History', body: 'Your medical ID and health details.', icon: 'document-text-outline', href: '/records' },
-  { key: 'symptoms', title: 'Symptoms Checker', body: 'Describe how you feel and learn where to go next.', icon: 'medkit-outline', href: { pathname: '/soon', params: { feature: 'symptoms' } } },
-  { key: 'library', title: 'Health Library', body: 'Trusted articles on everyday health topics.', icon: 'library-outline', href: { pathname: '/soon', params: { feature: 'library' } } },
-  { key: 'recipes', title: 'Healthy Recipes', body: 'Nourishing local meals for a healthier you.', icon: 'nutrition-outline', href: { pathname: '/soon', params: { feature: 'recipes' } } },
-  { key: 'meds', title: 'Medicines', body: 'Reminders so you never miss a dose.', icon: 'alarm-outline', href: { pathname: '/soon', params: { feature: 'meds' } } },
+  { key: 'symptoms', title: 'Symptoms Checker', body: 'Describe how you feel and learn where to go next.', icon: 'medkit-outline', href: '/symptoms' },
+  { key: 'library', title: 'Health Library', body: 'Trusted articles on everyday health topics.', icon: 'library-outline', href: '/library' },
+  { key: 'recipes', title: 'Healthy Recipes', body: 'Nourishing local meals for a healthier you.', icon: 'nutrition-outline', href: '/recipes' },
+  { key: 'meds', title: 'Medicines', body: 'Reminders so you never miss a dose.', icon: 'alarm-outline', href: '/meds' },
   { key: 'sos', title: 'Emergency SOS', body: 'Call 112 or an ambulance in one tap.', icon: 'call-outline', href: '/sos', danger: true },
 ];
 

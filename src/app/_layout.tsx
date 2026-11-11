@@ -62,7 +62,14 @@ function RootStack() {
         <Stack.Screen name="profile" />
         <Stack.Screen name="languages" />
         <Stack.Screen name="about" />
-        <Stack.Screen name="soon" />
+        <Stack.Screen name="log" />
+        <Stack.Screen name="meds" />
+        <Stack.Screen name="med-edit" />
+        <Stack.Screen name="symptoms" />
+        <Stack.Screen name="library" />
+        <Stack.Screen name="article" />
+        <Stack.Screen name="recipes" />
+        <Stack.Screen name="recipe" />
       </Stack.Protected>
     </Stack>
   );

@@ -10,6 +10,8 @@ const steps = [
   ['Typecheck', 'npx', ['tsc', '--noEmit']],
   ['Unit tests', process.execPath, ['--experimental-strip-types', '--no-warnings', '--test', ...tests]],
   ['Expo dependency versions', 'npx', ['expo', 'install', '--check']],
+  ['Server typecheck', 'npx', ['tsc', '-p', 'server', '--noEmit']],
+  ['Server tests', process.execPath, ['--experimental-strip-types', '--no-warnings', '--test', 'server/test/validate.test.ts']],
 ];
 
 let failed = 0;

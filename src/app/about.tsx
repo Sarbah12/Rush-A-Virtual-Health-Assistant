@@ -15,9 +15,12 @@ export default function About() {
         Rush keeps no copy and nothing is shared or sold.
       </T>
       <T>
-        When the chat arrives, your messages will be sent securely to an AI service to get a reply. They will not be
-        stored on a server. You can delete everything at any time from Settings.
+        Chat is the only feature that uses the internet. Your messages are sent securely through the Rush server to
+        Anthropic’s Claude AI to get a reply. The Rush server does not store or log them. Your health info is only
+        included if you turn on “Use my health info” in the chat, and your name, phone number and emergency contact are
+        never sent.
       </T>
+      <T>Medicine reminders are scheduled on your phone. You can export or delete everything at any time from Settings.</T>
     </Card>
   );
 

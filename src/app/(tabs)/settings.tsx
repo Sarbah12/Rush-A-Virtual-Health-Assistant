@@ -4,11 +4,17 @@ import { Alert, Platform } from 'react-native';
 import { ListRow, Screen, SectionLabel, T, Title } from '@/components/ui';
 import { Colors } from '@/constants/theme';
 import { useAppState } from '@/lib/app-state';
+import { exportText } from '@/lib/export';
+import { shareText } from '@/lib/share';
+import { useHealthLog } from '@/lib/use-health-log';
+import { useMeds } from '@/lib/use-meds';
 
 // Figma "settings": Account settings and Support lists. "Account Login" is
 // replaced by Profile because Rush has no account.
 export default function Settings() {
-  const { deleteAllData } = useAppState();
+  const { deleteAllData, medicalId } = useAppState();
+  const { entries } = useHealthLog();
+  const { data: meds } = useMeds();
 
   function confirmDelete() {
     const message =
@@ -34,8 +40,15 @@ export default function Settings() {
       <SectionLabel>Support</SectionLabel>
       <ListRow icon="information-circle-outline" label="About Rush" onPress={() => router.push('/about')} />
       <ListRow icon="call-outline" label="Emergency numbers" onPress={() => router.push('/sos')} />
+      <ListRow icon="medkit-outline" label="Symptoms Checker" onPress={() => router.push('/symptoms')} />
 
       <SectionLabel>Your data</SectionLabel>
+      <ListRow
+        icon="share-outline"
+        label="Export your medical data"
+        detail="A summary to share with your doctor"
+        onPress={() => shareText('Rush health summary', exportText(medicalId, entries, meds))}
+      />
       <ListRow icon="trash-outline" label="Delete all my data" danger onPress={confirmDelete} />
       <T variant="small" color={Colors.textMuted} style={{ textAlign: 'center' }}>
         Rush 1.0 · your data never leaves this phone

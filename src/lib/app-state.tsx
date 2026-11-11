@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, use, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import { cleanMedicalId, emptyMedicalId, parseMedicalId, type MedicalId } from './medical-id';
+import { syncReminders } from './reminders';
+import { notifyAll } from './store';
 
 // Everything here lives only on this phone. Nothing is sent anywhere.
 const KEYS = {
@@ -81,6 +83,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const deleteAllData = useCallback(async () => {
     const keys = (await AsyncStorage.getAllKeys()).filter((k) => k.startsWith('rush.'));
     await AsyncStorage.multiRemove(keys);
+    await syncReminders([]).catch(() => {});
+    notifyAll();
     setMedicalId(emptyMedicalId());
     setConsented(false);
     setOnboarded(false);
